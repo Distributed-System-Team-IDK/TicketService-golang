@@ -1,4 +1,4 @@
-package CA2
+package utils
 
 import (
 	"sync"

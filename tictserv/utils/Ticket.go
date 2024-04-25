@@ -1,4 +1,4 @@
-package CA2
+package utils
 
 type Ticket struct {
 	ID      string
