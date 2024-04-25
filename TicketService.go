@@ -3,6 +3,7 @@ package CA2
 import (
 	"fmt"
 	"github.com/google/uuid"
+	"log"
 	"sync"
 	"time"
 )
@@ -17,6 +18,7 @@ type TicketService struct {
 }
 
 func (ts *TicketService) CreateEvent(name string, date time.Time, totalTickets int) (*Event, error) {
+	log.Println("CreateEvent called")
 	event := &Event{
 		ID:               generateUUID(),
 		Name:             name,
@@ -30,6 +32,7 @@ func (ts *TicketService) CreateEvent(name string, date time.Time, totalTickets i
 }
 
 func (ts *TicketService) ListEvents() []*Event {
+	log.Println("ListEvents called")
 	var events []*Event
 	ts.events.Range(func(key, value interface{}) bool {
 		event := value.(*Event)
@@ -40,6 +43,7 @@ func (ts *TicketService) ListEvents() []*Event {
 }
 
 func (ts *TicketService) BookTickets(eventID string, numTickets int) ([]string, error) {
+	log.Println("Book Tickets called")
 	event, ok := ts.events.Load(eventID)
 	if !ok {
 		return nil, fmt.Errorf("event not found")
@@ -54,6 +58,8 @@ func (ts *TicketService) BookTickets(eventID string, numTickets int) ([]string, 
 		return nil, fmt.Errorf("not enough tickets available")
 	}
 
+	log.Println("Event found:", ev)
+
 	var ticketIDs []string
 	for i := 0; i < numTickets; i++ {
 		ticket := &Ticket{
@@ -63,6 +69,8 @@ func (ts *TicketService) BookTickets(eventID string, numTickets int) ([]string, 
 		ticketIDs = append(ticketIDs, ticket.ID)
 		ts.tickets.Store(ticket.ID, ticket)
 	}
+
+	log.Println("ticketIDs that were added:", ticketIDs)
 
 	ev.mu.Lock()
 	ev.AvailableTickets -= numTickets
