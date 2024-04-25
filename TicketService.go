@@ -18,7 +18,7 @@ type TicketService struct {
 
 func (ts *TicketService) CreateEvent(name string, date time.Time, totalTickets int) (*Event, error) {
 	event := &Event{
-		ID:               generateUUID(), // Generate a unique ID for the event
+		ID:               generateUUID(),
 		Name:             name,
 		Date:             date,
 		TotalTickets:     totalTickets,
@@ -40,8 +40,6 @@ func (ts *TicketService) ListEvents() []*Event {
 }
 
 func (ts *TicketService) BookTickets(eventID string, numTickets int) ([]string, error) {
-	// Implement concurrency control here (Step 3)
-	// ...
 	event, ok := ts.events.Load(eventID)
 	if !ok {
 		return nil, fmt.Errorf("event not found")
@@ -63,10 +61,13 @@ func (ts *TicketService) BookTickets(eventID string, numTickets int) ([]string, 
 			EventID: ev.ID,
 		}
 		ticketIDs = append(ticketIDs, ticket.ID)
-		// Todo: Store the ticket in a separate data structure if needed
+		ts.tickets.Store(ticket.ID, ticket)
 	}
 
+	ev.mu.Lock()
 	ev.AvailableTickets -= numTickets
+	ev.mu.Unlock()
+
 	ts.events.Store(eventID, ev)
 
 	return ticketIDs, nil
