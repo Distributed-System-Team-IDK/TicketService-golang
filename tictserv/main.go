@@ -38,16 +38,32 @@ func main() {
 			ctx.AbortWithStatus(http.StatusBadRequest)
 			return
 		} else {
-			rqch <- &createReq
+			create_rqch <- &createReq
 		}
 	})
 
-	r.POST("/ticket", func(ctx *gin.Context) {
-		// todo
+	r.GET("/event", func(ctx *gin.Context) {
+		var listReq utils.ListEventRequest
+
+		if err := ctx.ShouldBind(&listReq); err != nil {
+			ctx.Error(err)
+			ctx.AbortWithStatus(http.StatusBadRequest)
+			return
+		} else {
+			list_rqch <- &listReq
+		}
 	})
 
-	r.GET("/ticket", func(ctx *gin.Context) {
-		// todo
+	r.POST("/event", func(ctx *gin.Context) {
+		var bookReq utils.BookTicketRequest
+
+		if err := ctx.ShouldBind(&bookReq); err != nil {
+			ctx.Error(err)
+			ctx.AbortWithStatus(http.StatusBadRequest)
+			return
+		} else {
+			book_rqch <- &bookReq
+		}
 	})
 
 	wg.Add(1)
