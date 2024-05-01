@@ -17,16 +17,10 @@ func main() {
 	address := ":" + strconv.Itoa(ServerPort)
 	wg := &sync.WaitGroup{}
 	service := &utils.TicketService{}
-	rb := &utils.RequestBuffer{
-		Service: service,
-	}
+	rqch := make(chan utils.RequestImp)
+	rsch := make(chan utils.ResponseImp)
 
-	reqCh := make(chan utils.RequestImp)
-	go func() {
-		if err := rb.Listen(reqCh); err != nil {
-			log.Fatalf("Error in getting RequestBuffer listening: %v", err)
-		}
-	}()
+	go utils.HandleRequest(service, rqch, rsch)
 
 	r := gin.Default()
 
@@ -38,13 +32,14 @@ func main() {
 
 	r.POST("/event", func(ctx *gin.Context) {
 		var createReq utils.CreateEventRequest
+
 		if err := ctx.ShouldBind(&createReq); err != nil {
 			ctx.Error(err)
 			ctx.AbortWithStatus(http.StatusBadRequest)
 			return
+		} else {
+			rqch <- &createReq
 		}
-
-		reqCh <- &createReq
 	})
 
 	r.POST("/ticket", func(ctx *gin.Context) {

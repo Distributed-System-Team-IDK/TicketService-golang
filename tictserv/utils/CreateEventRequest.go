@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"log"
 	"time"
 )
 
@@ -12,10 +13,12 @@ type CreateEventRequest struct {
 	TotalTickets int
 }
 
-func (r *CreateEventRequest) Handle(service *TicketService) (interface{}, error) {
-	if event, err := service.CreateEvent(r.Name, r.Date, r.TotalTickets); err != nil {
-		return nil, err
+func (rq *CreateEventRequest) Exec(ts *TicketService) (ResponseImp, error) {
+	if event, err := ts.CreateEvent(rq.Name, rq.Date, rq.TotalTickets); err != nil {
+		//todo: error handling
 	} else {
-		return event, nil
+		log.Println(event.Name, "created!") // todo: must be removed
 	}
+	// todo: build response
+	return Response{}, nil
 }

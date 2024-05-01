@@ -1,6 +1,5 @@
 package utils
 
 type RequestImp interface {
-	Handle(service *TicketService) (interface{}, error)
-	Respond() error
+	Exec(ts *TicketService) (ResponseImp, error)
 }
