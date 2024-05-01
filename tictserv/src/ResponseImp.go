@@ -1,4 +1,4 @@
-package utils
+package src
 
 type ResponseImp interface {
 }

@@ -1,4 +1,4 @@
-package utils
+package src
 
 type Ticket struct {
 	ID      string

@@ -1,7 +1,8 @@
 package main
 
 import (
-	"distributed.org/tictsrv/utils"
+	"distributed.org/tictsrv/src"
+	"distributed.org/tictsrv/src/requests"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -16,11 +17,11 @@ const (
 func main() {
 	address := ":" + strconv.Itoa(ServerPort)
 	wg := &sync.WaitGroup{}
-	service := &utils.TicketService{}
-	rqch := make(chan utils.RequestImp)
-	rsch := make(chan utils.ResponseImp)
+	service := &src.TicketService{}
+	rqch := make(chan src.RequestImp)
+	rsch := make(chan src.ResponseImp)
 
-	go utils.HandleRequest(service, rqch, rsch)
+	go src.HandleRequest(service, rqch, rsch)
 
 	r := gin.Default()
 
@@ -31,7 +32,7 @@ func main() {
 	})
 
 	r.POST("/event", func(ctx *gin.Context) {
-		var createReq utils.CreateEventRequest
+		var createReq requests.CreateEventRequest
 
 		if err := ctx.ShouldBind(&createReq); err != nil {
 			ctx.Error(err)
@@ -43,7 +44,7 @@ func main() {
 	})
 
 	r.GET("/event", func(ctx *gin.Context) {
-		var listReq utils.ListEventRequest
+		var listReq requests.ListEventRequest
 
 		if err := ctx.ShouldBind(&listReq); err != nil {
 			ctx.Error(err)
@@ -55,7 +56,7 @@ func main() {
 	})
 
 	r.POST("/ticket", func(ctx *gin.Context) {
-		var bookReq utils.BookTicketRequest
+		var bookReq requests.BookTicketRequest
 
 		if err := ctx.ShouldBind(&bookReq); err != nil {
 			ctx.Error(err)
