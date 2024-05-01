@@ -1,9 +1,11 @@
 package responses
 
-import "distributed.org/tictsrv/src"
+import (
+	"distributed.org/tictserv"
+)
 
 type ErrorResponse struct {
-	src.ResponseImp
+	tictserv.ResponseImp
 	Status  int
 	Message string
 }

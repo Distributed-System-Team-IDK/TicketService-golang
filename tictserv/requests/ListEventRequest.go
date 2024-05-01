@@ -1,16 +1,16 @@
 package requests
 
 import (
-	"distributed.org/tictsrv/src"
-	"distributed.org/tictsrv/src/responses"
+	"distributed.org/tictserv"
+	"distributed.org/tictserv/responses"
 	"log"
 )
 
 type ListEventRequest struct {
-	src.RequestImp
+	tictserv.RequestImp
 }
 
-func (rq *ListEventRequest) Exec(ts *src.TicketService) src.ResponseImp {
+func (rq *ListEventRequest) Exec(ts *tictserv.TicketService) tictserv.ResponseImp {
 	events := ts.ListEvents()
 
 	// log

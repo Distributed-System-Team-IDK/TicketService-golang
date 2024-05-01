@@ -1,8 +1,8 @@
 package main
 
 import (
-	"distributed.org/tictsrv/src"
-	"distributed.org/tictsrv/src/requests"
+	"distributed.org/tictserv"
+	"distributed.org/tictserv/requests"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -17,11 +17,11 @@ const (
 func main() {
 	address := ":" + strconv.Itoa(ServerPort)
 	wg := &sync.WaitGroup{}
-	service := &src.TicketService{}
-	rqch := make(chan src.RequestImp)
-	rsch := make(chan src.ResponseImp)
+	service := &tictserv.TicketService{}
+	rqch := make(chan tictserv.RequestImp)
+	rsch := make(chan tictserv.ResponseImp)
 
-	go src.HandleRequest(service, rqch, rsch)
+	go tictserv.HandleRequest(service, rqch, rsch)
 
 	r := gin.Default()
 

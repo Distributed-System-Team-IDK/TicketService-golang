@@ -1,11 +1,11 @@
 package responses
 
 import (
-	"distributed.org/tictsrv/src"
+	"distributed.org/tictserv"
 )
 
 type ListEventsResponse struct {
-	src.ResponseImp
+	tictserv.ResponseImp
 	Status int
-	Events []*src.Event
+	Events []*tictserv.Event
 }

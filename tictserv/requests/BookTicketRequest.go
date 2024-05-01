@@ -1,18 +1,18 @@
 package requests
 
 import (
-	"distributed.org/tictsrv/src"
-	"distributed.org/tictsrv/src/responses"
+	"distributed.org/tictserv"
+	"distributed.org/tictserv/responses"
 	"log"
 )
 
 type BookTicketRequest struct {
-	src.RequestImp
+	tictserv.RequestImp
 	eventID    string
 	numTickets int
 }
 
-func (rq *BookTicketRequest) Exec(ts *src.TicketService) src.ResponseImp {
+func (rq *BookTicketRequest) Exec(ts *tictserv.TicketService) tictserv.ResponseImp {
 	if ticketIDs, err := ts.BookTickets(rq.eventID, rq.numTickets); err != nil {
 		return responses.ErrorResponse{
 			Status:  500,

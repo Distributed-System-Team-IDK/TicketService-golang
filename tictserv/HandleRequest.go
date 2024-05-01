@@ -1,4 +1,4 @@
-package src
+package tictserv
 
 func HandleRequest(ts *TicketService, rqch <-chan RequestImp, rsch chan<- ResponseImp) {
 	for req := range rqch {

@@ -1,4 +1,4 @@
-module distributed.org/tictsrv
+module distributed.org
 
 go 1.21.5
 
