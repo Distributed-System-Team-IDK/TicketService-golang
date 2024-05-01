@@ -38,7 +38,7 @@ func main() {
 			ctx.AbortWithStatus(http.StatusBadRequest)
 			return
 		} else {
-			create_rqch <- &createReq
+			rqch <- &createReq
 		}
 	})
 
@@ -50,11 +50,11 @@ func main() {
 			ctx.AbortWithStatus(http.StatusBadRequest)
 			return
 		} else {
-			list_rqch <- &listReq
+			rqch <- &listReq
 		}
 	})
 
-	r.POST("/event", func(ctx *gin.Context) {
+	r.POST("/ticket", func(ctx *gin.Context) {
 		var bookReq utils.BookTicketRequest
 
 		if err := ctx.ShouldBind(&bookReq); err != nil {
@@ -62,7 +62,7 @@ func main() {
 			ctx.AbortWithStatus(http.StatusBadRequest)
 			return
 		} else {
-			book_rqch <- &bookReq
+			rqch <- &bookReq
 		}
 	})
 
