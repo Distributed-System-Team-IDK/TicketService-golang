@@ -8,12 +8,12 @@ import (
 	"sync"
 )
 
-type ListEventRequest struct {
+type ListEventsRequest struct {
 	tictserv.RequestImp `json:"-"`
 	ContextHolder       `json:"-"`
 }
 
-func (rq *ListEventRequest) Exec(ts *tictserv.TicketService) tictserv.ResponseImp {
+func (rq *ListEventsRequest) Exec(ts *tictserv.TicketService) tictserv.ResponseImp {
 	events := ts.ListEvents()
 
 	// log
@@ -30,10 +30,10 @@ func (rq *ListEventRequest) Exec(ts *tictserv.TicketService) tictserv.ResponseIm
 		Events: events,
 	}
 }
-func (rq *ListEventRequest) GetContext() *gin.Context {
+func (rq *ListEventsRequest) GetContext() *gin.Context {
 	return rq.ContextHolder.Context
 }
 
-func (rq *ListEventRequest) GetWaitGroup() *sync.WaitGroup {
+func (rq *ListEventsRequest) GetWaitGroup() *sync.WaitGroup {
 	return rq.ContextHolder.WaitGroup
 }

@@ -51,7 +51,7 @@ func main() {
 	r.GET("/event", func(ctx *gin.Context) {
 		wg := &sync.WaitGroup{}
 		defer wg.Wait()
-		listReq := requests.ListEventRequest{
+		listReq := requests.ListEventsRequest{
 			ContextHolder: requests.ContextHolder{
 				Context:   ctx,
 				WaitGroup: wg,
