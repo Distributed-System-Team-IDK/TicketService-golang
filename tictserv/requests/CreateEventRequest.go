@@ -4,7 +4,6 @@ import (
 	"distributed.org/tictserv"
 	"distributed.org/tictserv/responses"
 	"github.com/gin-gonic/gin"
-	"log"
 	"sync"
 	"time"
 )
@@ -24,9 +23,9 @@ func (rq *CreateEventRequest) Exec(ts *tictserv.TicketService) tictserv.Response
 			Message: "create event failed: " + err.Error(),
 		}
 	} else {
-		log.Println(event.Name, "created!")
 		return &responses.CreateEventResponse{
 			Status:  200,
+			ID:      event.ID,
 			Message: "event created successfully",
 		}
 	}

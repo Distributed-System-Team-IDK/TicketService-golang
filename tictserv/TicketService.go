@@ -28,6 +28,7 @@ func (ts *TicketService) CreateEvent(name string, date time.Time, totalTickets i
 	}
 
 	ts.events.Store(event.ID, event)
+	log.Printf("Event with id = %s were created", event.ID)
 	return event, nil
 }
 
@@ -70,13 +71,13 @@ func (ts *TicketService) BookTickets(eventID string, numTickets int) ([]string, 
 		ts.tickets.Store(ticket.ID, ticket)
 	}
 
-	log.Println("ticketIDs that were added:", ticketIDs)
-
 	ev.mu.Lock()
 	ev.AvailableTickets -= numTickets
 	ev.mu.Unlock()
 
 	ts.events.Store(eventID, ev)
+
+	log.Printf("%d tickets were added", len(ticketIDs))
 
 	return ticketIDs, nil
 }
