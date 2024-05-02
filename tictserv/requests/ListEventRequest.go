@@ -3,11 +3,14 @@ package requests
 import (
 	"distributed.org/tictserv"
 	"distributed.org/tictserv/responses"
+	"github.com/gin-gonic/gin"
 	"log"
+	"sync"
 )
 
 type ListEventRequest struct {
-	tictserv.RequestImp
+	tictserv.RequestImp `json:"-"`
+	ContextHolder       `json:"-"`
 }
 
 func (rq *ListEventRequest) Exec(ts *tictserv.TicketService) tictserv.ResponseImp {
@@ -22,8 +25,15 @@ func (rq *ListEventRequest) Exec(ts *tictserv.TicketService) tictserv.ResponseIm
 		}
 	}
 
-	return responses.ListEventsResponse{
+	return &responses.ListEventsResponse{
 		Status: 200,
 		Events: events,
 	}
+}
+func (rq *ListEventRequest) GetContext() *gin.Context {
+	return rq.ContextHolder.Context
+}
+
+func (rq *ListEventRequest) GetWaitGroup() *sync.WaitGroup {
+	return rq.ContextHolder.WaitGroup
 }

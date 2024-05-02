@@ -16,12 +16,10 @@ const (
 
 func main() {
 	address := ":" + strconv.Itoa(ServerPort)
-	wg := &sync.WaitGroup{}
 	service := &tictserv.TicketService{}
 	rqch := make(chan tictserv.RequestImp)
-	rsch := make(chan tictserv.ResponseImp)
 
-	go tictserv.HandleRequest(service, rqch, rsch)
+	go tictserv.HandleRequest(service, rqch)
 
 	r := gin.Default()
 
@@ -32,41 +30,57 @@ func main() {
 	})
 
 	r.POST("/event", func(ctx *gin.Context) {
-		var createReq requests.CreateEventRequest
+		wg := &sync.WaitGroup{}
+		defer wg.Wait()
+		createReq := requests.CreateEventRequest{
+			ContextHolder: requests.ContextHolder{
+				Context:   ctx,
+				WaitGroup: wg,
+			},
+		}
 
 		if err := ctx.ShouldBind(&createReq); err != nil {
 			ctx.Error(err)
 			ctx.AbortWithStatus(http.StatusBadRequest)
-			return
 		} else {
+			wg.Add(1)
 			rqch <- &createReq
 		}
 	})
 
 	r.GET("/event", func(ctx *gin.Context) {
-		var listReq requests.ListEventRequest
-
-		if err := ctx.ShouldBind(&listReq); err != nil {
-			ctx.Error(err)
-			ctx.AbortWithStatus(http.StatusBadRequest)
-			return
-		} else {
-			rqch <- &listReq
+		wg := &sync.WaitGroup{}
+		defer wg.Wait()
+		listReq := requests.ListEventRequest{
+			ContextHolder: requests.ContextHolder{
+				Context:   ctx,
+				WaitGroup: wg,
+			},
 		}
+		wg.Add(1)
+		rqch <- &listReq
 	})
 
 	r.POST("/ticket", func(ctx *gin.Context) {
-		var bookReq requests.BookTicketRequest
+		wg := &sync.WaitGroup{}
+		defer wg.Wait()
+		bookReq := requests.BookTicketRequest{
+			ContextHolder: requests.ContextHolder{
+				Context:   ctx,
+				WaitGroup: wg,
+			},
+		}
 
 		if err := ctx.ShouldBind(&bookReq); err != nil {
 			ctx.Error(err)
 			ctx.AbortWithStatus(http.StatusBadRequest)
-			return
 		} else {
+			wg.Add(1)
 			rqch <- &bookReq
 		}
 	})
 
+	wg := &sync.WaitGroup{}
 	wg.Add(1)
 	go func() {
 		defer wg.Done()

@@ -5,7 +5,11 @@ import (
 )
 
 type ListEventsResponse struct {
-	tictserv.ResponseImp
-	Status int
-	Events []*tictserv.Event
+	tictserv.ResponseImp `json:"-"`
+	Status               int
+	Events               []*tictserv.Event
+}
+
+func (rs *ListEventsResponse) GetStatus() int {
+	return rs.Status
 }

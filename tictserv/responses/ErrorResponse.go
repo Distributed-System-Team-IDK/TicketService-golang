@@ -5,7 +5,11 @@ import (
 )
 
 type ErrorResponse struct {
-	tictserv.ResponseImp
-	Status  int
-	Message string
+	tictserv.ResponseImp `json:"-"`
+	Status               int
+	Message              string
+}
+
+func (rs *ErrorResponse) GetStatus() int {
+	return rs.Status
 }

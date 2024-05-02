@@ -5,8 +5,12 @@ import (
 )
 
 type BookTicketResponse struct {
-	tictserv.ResponseImp
-	Status    int
-	Message   string
-	TicketIDs []string
+	tictserv.ResponseImp `json:"-"`
+	Status               int
+	Message              string
+	TicketIDs            []string
+}
+
+func (rs *BookTicketResponse) GetStatus() int {
+	return rs.Status
 }
