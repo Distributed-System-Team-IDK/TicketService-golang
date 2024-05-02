@@ -55,11 +55,11 @@ func (ts *TicketService) BookTickets(eventID string, numTickets int) ([]string, 
 		return nil, fmt.Errorf("invalid event")
 	}
 
+	log.Printf("Event found: name=%s , id=%s , available tickets=%d", ev.Name, ev.ID, ev.AvailableTickets)
+
 	if ev.AvailableTickets < numTickets {
 		return nil, fmt.Errorf("not enough tickets available")
 	}
-
-	log.Println("Event found:", ev)
 
 	var ticketIDs []string
 	for i := 0; i < numTickets; i++ {
