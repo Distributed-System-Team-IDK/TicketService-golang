@@ -53,14 +53,9 @@ func (ts *TicketService) ListEvents() []*Event {
 
 func (ts *TicketService) BookTickets(eventID string, numTickets int) ([]string, error) {
 	log.Println("Book Tickets called")
-	event, ok := ts.loadEvent(eventID)
+	ev, ok := ts.loadEvent(eventID)
 	if !ok {
 		return nil, fmt.Errorf("event not found")
-	}
-
-	var ev *Event
-	if ev, ok = event.(*Event); !ok {
-		return nil, fmt.Errorf("invalid event")
 	}
 
 	log.Printf("Event found: name=%s , id=%s , available tickets=%d", ev.Name, ev.ID, ev.AvailableTickets)
@@ -90,7 +85,7 @@ func (ts *TicketService) BookTickets(eventID string, numTickets int) ([]string, 
 	return ticketIDs, nil
 }
 
-func (ts *TicketService) loadEvent(id string) (any, bool) {
+func (ts *TicketService) loadEvent(id string) (*Event, bool) {
 	value, ok := ts.eventsCache.Load(id)
 	if !ok {
 		value, ok := ts.events.Load(id)
@@ -98,13 +93,13 @@ func (ts *TicketService) loadEvent(id string) (any, bool) {
 			return nil, false
 		}
 		ts.eventsCache.Cache(id, value)
-		return value, true
+		return value.(*Event), true
 	} else {
-		return value, true
+		return value.(*Event), true
 	}
 }
 
-func (ts *TicketService) storeEvent(id string, value any) {
-	ts.events.Store(id, value)
-	ts.eventsCache.Cache(id, value)
+func (ts *TicketService) storeEvent(id string, event *Event) {
+	ts.events.Store(id, event)
+	ts.eventsCache.Cache(id, event)
 }
