@@ -22,7 +22,7 @@ var fp *tictserv.FairnessProvider
 
 func main() {
 	address := ":" + strconv.Itoa(ServerPort)
-	service := &tictserv.TicketService{}
+	service := tictserv.NewTicketService()
 	rqch = make(chan tictserv.RequestImp)
 	fp = tictserv.NewFairnessProvider(MaxAcceptedRequestsPerHost)
 

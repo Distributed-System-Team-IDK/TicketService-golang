@@ -15,6 +15,14 @@ var generateUUID = func() string {
 type TicketService struct {
 	events  sync.Map
 	tickets sync.Map
+
+	eventsCache *Cache
+}
+
+func NewTicketService() *TicketService {
+	return &TicketService{
+		eventsCache: NewCache(),
+	}
 }
 
 func (ts *TicketService) CreateEvent(name string, date time.Time, totalTickets int) (*Event, error) {
@@ -27,7 +35,7 @@ func (ts *TicketService) CreateEvent(name string, date time.Time, totalTickets i
 		AvailableTickets: totalTickets,
 	}
 
-	ts.events.Store(event.ID, event)
+	ts.storeEvent(event.ID, event)
 	log.Printf("Event with id = %s were created", event.ID)
 	return event, nil
 }
@@ -45,7 +53,7 @@ func (ts *TicketService) ListEvents() []*Event {
 
 func (ts *TicketService) BookTickets(eventID string, numTickets int) ([]string, error) {
 	log.Println("Book Tickets called")
-	event, ok := ts.events.Load(eventID)
+	event, ok := ts.loadEvent(eventID)
 	if !ok {
 		return nil, fmt.Errorf("event not found")
 	}
@@ -75,9 +83,28 @@ func (ts *TicketService) BookTickets(eventID string, numTickets int) ([]string, 
 	ev.AvailableTickets -= numTickets
 	ev.mu.Unlock()
 
-	ts.events.Store(eventID, ev)
+	ts.storeEvent(eventID, ev)
 
 	log.Printf("%d tickets were added", len(ticketIDs))
 
 	return ticketIDs, nil
+}
+
+func (ts *TicketService) loadEvent(id string) (any, bool) {
+	value, ok := ts.eventsCache.Load(id)
+	if !ok {
+		value, ok := ts.events.Load(id)
+		if !ok {
+			return nil, false
+		}
+		ts.eventsCache.Cache(id, value)
+		return value, true
+	} else {
+		return value, true
+	}
+}
+
+func (ts *TicketService) storeEvent(id string, value any) {
+	ts.events.Store(id, value)
+	ts.eventsCache.Cache(id, value)
 }
