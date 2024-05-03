@@ -3,6 +3,7 @@ package main
 import (
 	"distributed.org/tictserv"
 	"distributed.org/tictserv/requests"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -29,6 +30,10 @@ func main() {
 
 	r := gin.Default()
 
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"*"}
+	r.Use(cors.New(config))
+
 	r.GET("/", handleGetRoot)
 	r.POST("/event", handlePostEvent)
 	r.GET("/event", handleGetEvent)
@@ -54,7 +59,7 @@ func handleGetRoot(ctx *gin.Context) {
 		ctx.JSON(200, gin.H{
 			"message": "Hello World!",
 		})
-		time.Sleep(5 * time.Second) // 5 seconds delay for testing fairness
+		time.Sleep(5 * time.Second) // 5 seconds for delay for testing fairness
 	})
 }
 
